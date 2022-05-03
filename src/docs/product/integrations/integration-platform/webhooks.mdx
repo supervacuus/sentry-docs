@@ -408,7 +408,7 @@ The following two fields are for [Alert Rule Action UI Components](/product/inte
           "Breadcrumbs",
           "GlobalHandlers",
           "LinkedErrors",
-          "UserAgent"
+          "HttpContext"
         ],
         "name": "sentry.javascript.browser",
         "packages": [
@@ -684,7 +684,6 @@ Note: The webhook payload stack frame order lists the oldest frame to the most r
 - type: string
 - description: the slug of the project the comment's issue belongs to
 
-
 ##### data["comment_id"]
 
 - type: int
@@ -695,12 +694,10 @@ Note: The webhook payload stack frame order lists the oldest frame to the most r
 - type: int
 - description: the id of the issue
 
-
 ##### data["timestamp"]
 
 - type: datetime
 - description: when the comment was created, updated, or deleted
-
 
 #### Payload
 
@@ -708,17 +705,16 @@ Note: The webhook payload stack frame order lists the oldest frame to the most r
 {
   "action": "created",
   "data": {
-      "comment": "adding a comment",
-      "project_slug": "sentry",
-      "comment_id": 1234,
-      "issue_id": 100,
-      "timestamp": "2022-03-02T21:51:44.118160Z"
+    "comment": "adding a comment",
+    "project_slug": "sentry",
+    "comment_id": 1234,
+    "issue_id": 100,
+    "timestamp": "2022-03-02T21:51:44.118160Z"
   },
-  "installation": {"uuid": "eac5a0ae-60ec-418f-9318-46dc5e7e52ec"},
-  "actor": {"type": "user", "id": 1, "name": "colleen"}
+  "installation": { "uuid": "eac5a0ae-60ec-418f-9318-46dc5e7e52ec" },
+  "actor": { "type": "user", "id": 1, "name": "colleen" }
 }
 ```
-
 
 ### Error
 
@@ -892,7 +888,7 @@ If you've set up user identification you can find the user attributes under `dat
           "Breadcrumbs",
           "GlobalHandlers",
           "LinkedErrors",
-          "UserAgent"
+          "HttpContext"
         ],
         "name": "sentry.javascript.browser",
         "packages": [
