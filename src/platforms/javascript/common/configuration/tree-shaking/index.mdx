@@ -5,13 +5,19 @@ description: "Learn how to reduce Sentry bundle size by tree shaking unused code
 keywords: ["bundle size", "webpack", "rollup", "debug"]
 ---
 
-Sentry ships with code that enables you to debug your Sentry configuration, primarily through logging. While this code can be very useful in development environments, it's not typically necessary to include it in your production bundles where it takes up valuable space. The JavaScript SDK includes a special flag in its CommonJS and ESM distributions which can be used to facilitate [tree shaking](https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking) (removal) of such code during the build process.
+The Sentry SDK supports [tree shaking](https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking) in various ways.
+To fully utilize the tree shaking capabilities of modern bundlers like Webpack or Rollup, some additional configurations must be applied.
+If you want to minimize the bundle size of the Sentry SDK, we recommend reading through this page and applying the tree shaking configurations as shown.
+
+## Tree Shaking Debug Code
+
+Sentry ships with code that enables you to debug your Sentry configuration, primarily through logging. While this code can be very useful in development environments, it's not typically necessary to include it in your production bundles where it takes up valuable space. The JavaScript SDK includes a special flag in its CommonJS and ESM distributions which can be used to facilitate tree shaking (removal) of such code during the build process.
 
 To make debugging code eligible for tree shaking, you must replace the `__SENTRY_DEBUG__` flag in the Sentry SDK with `false`.
 
 <PlatformSection notSupported={["javascript.nextjs"]}>
 
-## Tree Shaking Debug Code With Webpack
+### Tree Shaking Debug Code With Webpack
 
 To tree shake Sentry debug code in your webpack bundles, we recommend using webpack's [DefinePlugin](https://webpack.js.org/plugins/define-plugin/).
 
@@ -33,7 +39,7 @@ module.exports = {
 
 <PlatformSection notSupported={["javascript.nextjs"]}>
 
-## Tree Shaking Debug Code With Rollup
+### Tree Shaking Debug Code With Rollup
 
 If you're using `rollup.js`, we recommend using [Rollup's `replace` plugin](https://github.com/rollup/plugins/tree/master/packages/replace).
 
@@ -79,3 +85,46 @@ const nextConfig = {
 For more information on custom webpack configurations in Next.js, see [Custom Webpack Config](https://nextjs.org/docs/api-reference/next.config.js/custom-webpack-config) in the Next.js docs.
 
 </PlatformSection>
+
+## Tree Shaking Default Integrations
+
+By default, the Sentry SDK sets up a list of [default integrations](../integrations/default) that extend your
+SDK functionality. Furthermore, you can also add [additional](../integrations/plugin) or [custom](../integrations/custom)
+integrations to your SDK configuration.
+In case you do not want to include default integrations in your config, you can [disable](../options/#integration-configuration)
+them and add your custom array of integrations.
+However, if you also want to tree shake the unused default integrations, you can do so by creating a `Client` yourself.
+By doing this, you essentially bypass `Sentry.init` which normally creates a `Client` for you.
+
+The following example shows how to create and bind a `Client` which enables tree shaking of unused default integrations:
+
+```javascript {filename:main.js}
+import {
+  BrowserClient,
+  defaultStackParser,
+  makeFetchTransport,
+  Integrations,
+  getCurrentHub,
+} from "@sentry/browser";
+
+const client = new BrowserClient({
+  // all options you normally pass to Sentry.init
+  dsn: "your DSN",
+  // ...
+
+  transport: makeFetchTransport,
+  stackParser: defaultStackParser,
+  // Only the integrations listed here will be used
+  integrations: [
+    new Integrations.Breadcrumbs(),
+    new Integrations.GlobalHandlers(),
+    new Integrations.LinkedErrors(),
+    new Integrations.Dedupe(),
+  ],
+});
+
+getCurrentHub().bindClient(client);
+```
+
+Note that in contrast to `Sentry.init`, the `Client` constructor expects options of type `ClientOptions` instead of `Options`.
+This means that the `ClientOptions.integrations` property is the final array of integrations that will be used.
