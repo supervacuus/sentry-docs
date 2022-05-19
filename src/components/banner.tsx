@@ -5,12 +5,13 @@ import React, { useState, useEffect } from "react";
 // This is a lazy way of doing things but will work until
 // we put a more robust solution in place.
 //
-const SHOW_BANNER = false;
+const SHOW_BANNER = true;
 const BANNER_TEXT =
-  "Sentry will be at Pycon US 2022 - join our live workshop, 'Elasticsearch and Python, a Match Made in Heaven' on Apr. 28 @ 9:00 AM MDT.";
+  "We've built a reference demo app to make on the Integration Platform easier! Check it out for useful code examples in Python and TypeScript.";
+
 const BANNER_LINK_URL =
-  "https://us.pycon.org/2022/schedule/presentation/168/";
-const BANNER_LINK_TEXT = "Register here.";
+  "/product/integrations/integration-platform/#quick-start";
+const BANNER_LINK_TEXT = "Get started here.";
 const OPTIONAL_BANNER_IMAGE = null;
 
 //
